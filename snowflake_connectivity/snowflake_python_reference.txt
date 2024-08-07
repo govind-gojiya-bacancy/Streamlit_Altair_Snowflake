@@ -1,0 +1,60 @@
+# Snowflake
+
+- 3 Layer : 
+    - 1. Centralized Storage
+    - 2. Multi-Cluster Compute and Processing
+    - 3. Cloud Services
+
+### Centralized Storage
+- When data is loaded into Snowflake, it reorganizes that data into Snowflake’s 
+  internal optimized, compressed, columnar format. Snowflake stores this optimized 
+  data in cloud storage. Snowflake manages all aspects of how this data is stored.
+
+### Query Processing
+- Each virtual warehouse is an independent compute cluster that does not share 
+  compute resources with other virtual warehouses. As a result, each virtual 
+  warehouse has no impact on the performance of other virtual warehouses.
+
+### Cloud Services
+- The services within this layer include:
+    - Authentication
+    - Infrastructure management
+    - Metadata management
+    - Query parsing and optimization
+    - Access control
+
+
+# Snowflake python connector
+- pip install snowflake-connector-python
+- can use with Python to connect snowflake and perform DDLs, DMLs, and SQL.
+- Query run inside Snowflake.
+- SF Warehouse size limit can give advantage of parallel processing where it use processing/Cpu of Snowflake Eco System
+- Problem : Fetching huge data from SF to Pandas DF will also cause resource contention due to huge data movement from SF to client system.
+
+# SnowPark 
+- pip install snowflake-snowpark-python
+- process data in Snowflake without moving data to the system where your application code runs
+- DF style of programming construct to developers with same performance as that of SQL queries .
+- code push-down approach where all the code including Your favourite Python functions (UDFs) are 
+  pushed to the server and runs natively in Snowflake’s Compute Engines giving You the best performance.
+
+
+## Reference
+- ''' https://medium.com/snowflake/comparing-snowpark-vs-the-ordinary-snowflake-python-connector-1252f8493ddc '''
+- ''' https://blog.devgenius.io/snowpark-vs-snowflake-connector-5c6baa44bde2 '''
+
+# Snowflake connector Vs Snowpark 
+
+- So we learned Snowpark provides a DF style of programming construct where
+  the application code is pushed to SF environment and run natively within 
+  Snowflake and gives the same performance as We get by firing a SQL Query 
+  to Snowflake.
+
+
+- Basically Snowflake connector query result in table if we want to give to Pandas DF
+  then it will take load on where script running where Snowpark DF give capability to 
+  directly make Snowpark Df inside the snowflake enviroment. As we know snowflake support 
+  many cluster that will give more power computation can lead to decrease in time to take data 
+  in DF.
+
+
