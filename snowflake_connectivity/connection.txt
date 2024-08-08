@@ -1,0 +1,38 @@
+# Snowflake Connector
+
+- Connecting using the default authenticator: 
+    - Example: 
+        '
+        conn = snowflake.connector.connect(
+            user=USER,
+            password=PASSWORD,
+            account=ACCOUNT,
+            warehouse=WAREHOUSE,
+            database=DATABASE,
+            schema=SCHEMA
+        )
+        '
+
+- Connecting using the connections.toml file:
+    - path: ~/.config/snowflake/connections.toml
+    - content: 
+        [myconnection]
+        account = "myaccount"
+        user = "jdoe"
+        password = "******"
+        warehouse = "my-wh"
+        database = "my_db"
+        schema = "my_schema"
+    - Example: (Also override variable specified at connection time)
+        '
+        with snowflake.connector.connect(
+            connection_name="myconnection",
+            warehouse="test_xl_wh",
+            database="testdb_2"
+        ) as conn:
+        '
+
+- Setting a default connection
+    - In connections.toml use name [default] and you can get connector by just calling without any parameter
+    - Else set the env variable ''' SNOWFLAKE_DEFAULT_CONNECTION_NAME = myconnection_test '''
+
