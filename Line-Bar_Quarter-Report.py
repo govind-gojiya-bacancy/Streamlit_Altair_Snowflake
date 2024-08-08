@@ -29,14 +29,20 @@ df["date"] = pd.to_datetime(df["date"])
 df["quarter"] = df['date'].dt.to_period('Q').astype(str)  # Convert to string for proper labeling
 df["month"] = df['date'].dt.strftime('%b')  # Month abbreviation
 
+st.markdown('<style>#vg-tooltip-element{z-index: 1000051}</style>',
+             unsafe_allow_html=True)
+
 bar_chart = alt.Chart(df).transform_joinaggregate(
         count_gross='sum(metric_value)',
         groupby=['quarter']
+    ).transform_calculate(
+        order="{'Jan':0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11}[datum.month]"  
     ).mark_bar().encode(
-    x=alt.X('quarter:N', title='Quarter', sort=None, axis=alt.Axis(labelAngle=0)),
+    x=alt.X('quarter:N', title='Quarter', axis=alt.Axis(labelAngle=0), sort=None),
     y=alt.Y('metric_value:Q', title='Quarter Gross metric'),
-    color=alt.Color('month:N', legend=None),
-    tooltip=[alt.Tooltip('quarter:N', title='Quarter'), alt.Tooltip('month:N', title='Month'), alt.Tooltip('metric_value:Q', title='Monthly Metric'), alt.Tooltip('count_gross:Q', title='Total Quarter Metric')]
+    color=alt.Color('month:N', legend=None, scale=alt.Scale(scheme='category20'), sort=alt.SortField("order", "ascending")),
+    tooltip=[alt.Tooltip('quarter:N', title='Quarter'), alt.Tooltip('month:N', title='Month'), alt.Tooltip('metric_value:Q', title='Monthly Metric'), alt.Tooltip('count_gross:Q', title='Total Quarter Metric')],
+    order="order:O"
 )
 
 line_chart = alt.Chart(df).mark_line(point=True, color='red').encode(
