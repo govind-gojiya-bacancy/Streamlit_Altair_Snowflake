@@ -2,7 +2,6 @@
 
 - Connecting using the default authenticator: 
     - Example: 
-        '
         conn = snowflake.connector.connect(
             user=USER,
             password=PASSWORD,
@@ -11,7 +10,7 @@
             database=DATABASE,
             schema=SCHEMA
         )
-        '
+
 
 - Connecting using the connections.toml file:
     - path: ~/.config/snowflake/connections.toml
@@ -24,15 +23,54 @@
         database = "my_db"
         schema = "my_schema"
     - Example: (Also override variable specified at connection time)
-        '
         with snowflake.connector.connect(
             connection_name="myconnection",
             warehouse="test_xl_wh",
             database="testdb_2"
         ) as conn:
-        '
+
 
 - Setting a default connection
     - In connections.toml use name [default] and you can get connector by just calling without any parameter
-    - Else set the env variable ''' SNOWFLAKE_DEFAULT_CONNECTION_NAME = myconnection_test '''
+    - Else set the env variable ''' SNOWFLAKE_DEFAULT_CONNECTION_NAME = myconnection_test ''' but this would specify in connections.toml
 
+
+- Using key-pair authentication and key-pair rotation
+    - For this first setup the key-pair in local and in snowflake : 
+        - To generate private key: ''' openssl genrsa 2048 | openssl pkcs8 -topk8 -v2 des3 -inform PEM -out rsa_key.p8 '''
+        - To create public key for that: ''' openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub '''
+        - Copy public key (Using '' cat rsa_key.pub '') and run query in snowflake: 
+            - ALTER USER example_user SET RSA_PUBLIC_KEY='Public_Key';
+    - Example to connect: 
+        private_key_file = '<path>'
+        private_key_file_pwd = '<password>'
+
+        conn_params = {
+            'account': '<account_identifier>',
+            'user': '<user>',
+            'private_key_file': private_key_file,
+            'private_key_file_pwd':private_key_file_pwd,
+            'warehouse': '<warehouse>',
+            'database': '<database>',
+            'schema': '<schema>'
+        }
+
+    
+
+- Connecting with OAuth
+    - For this must include 2 parameters: 1. authenticator="oauth" 2.token="<oauth_access_token>"
+    - Example to connect:
+        ctx = snowflake.connector.connect(
+            user="<username>",
+            host="<hostname>",
+            account="<account_identifier>",
+            authenticator="oauth",
+            token="<oauth_access_token>",
+            warehouse="test_warehouse",
+            database="test_db",
+            schema="test_schema"
+        )
+
+
+
+        
