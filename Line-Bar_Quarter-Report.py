@@ -40,9 +40,44 @@ bar_chart = alt.Chart(df).transform_joinaggregate(
     ).mark_bar().encode(
     x=alt.X('quarter:N', title='Quarter', axis=alt.Axis(labelAngle=0), sort=None),
     y=alt.Y('metric_value:Q', title='Quarter Gross metric'),
-    color=alt.Color('month:N', legend=None, scale=alt.Scale(scheme='category20'), sort=alt.SortField("order", "ascending")),
+    # color=alt.Color('month:N', legend=None, scale=alt.Scale(scheme='category20'), sort=alt.SortField("order", "ascending")),
     tooltip=[alt.Tooltip('quarter:N', title='Quarter'), alt.Tooltip('month:N', title='Month'), alt.Tooltip('metric_value:Q', title='Monthly Metric'), alt.Tooltip('count_gross:Q', title='Total Quarter Metric')],
     order="order:O"
+)
+
+line_chart = alt.Chart(df).mark_line(point=True, color='red').encode(
+    x=alt.X('month:N', title='Month', sort=None, axis=None),
+    y=alt.Y('growth:Q', title='Growth Rate (%)', scale=alt.Scale(domain=[-100, 100])),
+)
+
+chart = alt.layer(bar_chart, line_chart).resolve_scale(
+    x='independent',
+    y='independent'
+)
+
+st.altair_chart(chart, use_container_width=True)
+
+data_yearly = {
+    'months_list': [
+        ['Jan', 'Feb', 'Mar'], ['Apr', 'May'],
+        ['July'], ['Nov', 'Dec']
+    ],
+    'quarter': [
+        '2023Q1', '2023Q2', 
+        '2023Q3', '2023Q4' 
+    ],
+    'metric_value': [
+        120000, 80000, 
+        140000, 150000
+    ]
+}
+
+df_yearly = pd.DataFrame(data_yearly)
+
+bar_chart = alt.Chart(df_yearly).mark_bar().encode(
+    x=alt.X('quarter:N', title='Quarter', axis=alt.Axis(labelAngle=0), sort=None),
+    y=alt.Y('metric_value:Q', title='Quarter Gross metric'),
+    tooltip=[alt.Tooltip('quarter:N', title='Quarter'), alt.Tooltip('months_list:N', title='Month'), alt.Tooltip('metric_value:Q', title='Metric Value')],
 )
 
 line_chart = alt.Chart(df).mark_line(point=True, color='red').encode(
